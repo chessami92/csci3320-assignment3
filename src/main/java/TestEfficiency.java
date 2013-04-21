@@ -25,7 +25,7 @@ public class TestEfficiency {
             for (Sorter<Integer> sorter : sorters) {
                 Integer[] array = copyArray(testCase.getArray());
                 sorter.sort(array);
-                printSortedArray(array);
+                checkArraySorted(array);
                 System.out.println(sorter.getSorterDescription());
             }
         }
@@ -65,20 +65,18 @@ public class TestEfficiency {
     }
 
     /*
-     * Print out the array to the screen and also check to make sure it is sorted.
+     * Verify that the passed array is sorted. If it is not sorted, an illegal argument
+     * exception is thrown.
      */
-    private static void printSortedArray(Integer[] array) {
-        int lowest = array[0];
+    private static void checkArraySorted(Integer[] array) {
+        int priorElement = array[0];
 
-        System.out.printf("[%d, ", array[0]);
         for (int i = 1; i < array.length - 1; ++i) {
-            if (array[i] < lowest) {
+            if (array[i] < priorElement) {
                 throw new IllegalArgumentException("Array is not sorted");
             }
-            lowest = array[i];
-            System.out.printf("%d, ", array[i]);
+            priorElement = array[i];
         }
-        System.out.printf("%d]\n", array[array.length - 1]);
     }
 
     private static Sorter<Integer>[] getSortersForTest(int minimumElement, int maximumElement) {
