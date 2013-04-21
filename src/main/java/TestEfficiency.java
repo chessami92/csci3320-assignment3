@@ -1,5 +1,6 @@
 package main.java;
 
+import main.java.sort.BucketSort;
 import main.java.sort.QuickSort;
 import main.java.sort.Sorter;
 
@@ -17,12 +18,14 @@ public class TestEfficiency {
     public static void main(String[] args) {
         List<Sorter<Integer>> sorters = new ArrayList<Sorter<Integer>>();
         sorters.add(new QuickSort<Integer>());
+        sorters.add(new BucketSort(-1000, 1000));
 
         Integer[] test = createArray(1000, 500);
 
         for (Sorter<Integer> sorter : sorters) {
-            sorter.sort(test);
-            printSortedArray(test);
+            Integer[] temp = copyArray(test);
+            sorter.sort(temp);
+            printSortedArray(temp);
             System.out.println(sorter.getSorterDescription());
         }
     }
@@ -35,6 +38,19 @@ public class TestEfficiency {
         }
 
         return array;
+    }
+
+    /*
+     * Returns a deep copy of the original array.
+     */
+    private static Integer[] copyArray(Integer[] array) {
+        Integer[] newArray = new Integer[array.length];
+
+        for (int i = 0; i < array.length; ++i) {
+            newArray[i] = array[i];
+        }
+
+        return newArray;
     }
 
     /*
