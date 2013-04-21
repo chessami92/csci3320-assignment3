@@ -8,11 +8,13 @@ public class TestCase<T extends Comparable<T>> {
     private T minimumElement;
     private T maximumElement;
     private T[] array;
+    private String description;
 
-    public TestCase(T minimumElement, T maximumElement, T[] array) {
+    public TestCase(T minimumElement, T maximumElement, T[] array, String description) {
         this.minimumElement = minimumElement;
         this.maximumElement = maximumElement;
         this.array = array;
+        this.description = description;
     }
 
     public T getMinimumElement() {
@@ -25,5 +27,9 @@ public class TestCase<T extends Comparable<T>> {
 
     public T[] getArray() {
         return array;
+    }
+
+    public String getDescription() {
+        return description;
     }
 }

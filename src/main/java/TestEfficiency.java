@@ -4,6 +4,7 @@ import main.java.sort.BucketSort;
 import main.java.sort.QuickSort;
 import main.java.sort.Sorter;
 
+import java.util.Date;
 import java.util.Random;
 
 /**
@@ -12,22 +13,37 @@ import java.util.Random;
  */
 public class TestEfficiency {
     private static final Random random = new Random();
+    private static final String COLUMN_FORMAT = "%20s|";
 
     public static void main(String[] args) {
         //Create the three test cases: 1000 integers between -1000 and 1000, 1000 integers between -1 and 1,
         //and 1000 integers reverse sorted from 1000 to 1.
-        TestCase[] testCases = {new TestCase<Integer>(-100, 100, createArray(1000, 100)),
-                new TestCase<Integer>(-1, 1, createArray(1000, 1)),
-                new TestCase<Integer>(1, 1000, createReverseSortedArray(1, 1000))};
+        TestCase[] testCases = {new TestCase<Integer>(-100, 100, createArray(1000, 100), "Range -100 to 100"),
+                new TestCase<Integer>(-1, 1, createArray(1000, 1), "Range -1 to 1"),
+                new TestCase<Integer>(1, 1000, createReverseSortedArray(1, 1000), "Reverse sorted")};
+
+        Sorter[] sorters = getSortersForTest(0, 0);
+        System.out.printf(COLUMN_FORMAT, "Test Type");
+        for (Sorter<Integer> sorter : sorters) {
+            System.out.printf(COLUMN_FORMAT, sorter.getSorterDescription());
+        }
+        System.out.println();
 
         for (TestCase<Integer> testCase : testCases) {
-            Sorter[] sorters = getSortersForTest(testCase.getMinimumElement(), testCase.getMaximumElement());
+            System.out.printf(COLUMN_FORMAT, testCase.getDescription());
+            sorters = getSortersForTest(testCase.getMinimumElement(), testCase.getMaximumElement());
             for (Sorter<Integer> sorter : sorters) {
                 Integer[] array = copyArray(testCase.getArray());
+
+                Date startTime = new Date();
                 sorter.sort(array);
+                long timeTook = new Date().getTime() - startTime.getTime();
+                System.out.printf(COLUMN_FORMAT, timeTook);
+
+                //Verify that the array was actually sorted correctly.
                 checkArraySorted(array);
-                System.out.println(sorter.getSorterDescription());
             }
+            System.out.println();
         }
     }
 
