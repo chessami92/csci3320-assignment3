@@ -20,7 +20,7 @@ public class QuickSort<T extends Comparable<T>> implements Sorter<T> {
 
     @Override
     public String getSorterDescription() {
-        return String.format("Quicksort, insertion sort if n<%d", minimumQuickSort);
+        return String.format("Quicksort, X=%d", minimumQuickSort);
     }
 
     @Override

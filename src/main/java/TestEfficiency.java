@@ -4,8 +4,6 @@ import main.java.sort.BucketSort;
 import main.java.sort.QuickSort;
 import main.java.sort.Sorter;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 /**
@@ -16,17 +14,20 @@ public class TestEfficiency {
     private static final Random random = new Random();
 
     public static void main(String[] args) {
-        List<Sorter<Integer>> sorters = new ArrayList<Sorter<Integer>>();
-        sorters.add(new QuickSort<Integer>());
-        sorters.add(new BucketSort(-1000, 1000));
+        //Create the three test cases: 1000 integers between -1000 and 1000, 1000 integers between -1 and 1,
+        //and 1000 integers reverse sorted from 1000 to 1.
+        TestCase[] testCases = {new TestCase<Integer>(-100, 100, createArray(1000, 100)),
+                new TestCase<Integer>(-1, 1, createArray(1000, 1)),
+                new TestCase<Integer>(1, 1000, createReverseSortedArray(1, 1000))};
 
-        Integer[] test = createArray(1000, 500);
-
-        for (Sorter<Integer> sorter : sorters) {
-            Integer[] temp = copyArray(test);
-            sorter.sort(temp);
-            printSortedArray(temp);
-            System.out.println(sorter.getSorterDescription());
+        for (TestCase<Integer> testCase : testCases) {
+            Sorter[] sorters = getSortersForTest(testCase.getMinimumElement(), testCase.getMaximumElement());
+            for (Sorter<Integer> sorter : sorters) {
+                Integer[] array = copyArray(testCase.getArray());
+                sorter.sort(array);
+                printSortedArray(array);
+                System.out.println(sorter.getSorterDescription());
+            }
         }
     }
 
@@ -35,6 +36,16 @@ public class TestEfficiency {
 
         for (int i = 0; i < length; ++i) {
             array[i] = random.nextInt(2 * maxValue + 1) - maxValue;
+        }
+
+        return array;
+    }
+
+    private static Integer[] createReverseSortedArray(int minimumElement, int maximumElement) {
+        Integer[] array = new Integer[maximumElement - minimumElement + 1];
+
+        for (int i = 0; i < array.length; ++i) {
+            array[i] = maximumElement - i;
         }
 
         return array;
@@ -59,14 +70,24 @@ public class TestEfficiency {
     private static void printSortedArray(Integer[] array) {
         int lowest = array[0];
 
-        System.out.print("[");
+        System.out.printf("[%d, ", array[0]);
         for (int i = 1; i < array.length - 1; ++i) {
             if (array[i] < lowest) {
                 throw new IllegalArgumentException("Array is not sorted");
             }
             lowest = array[i];
-            System.out.printf("%s, ", array[i]);
+            System.out.printf("%d, ", array[i]);
         }
-        System.out.printf("%s]\n", array[array.length - 1]);
+        System.out.printf("%d]\n", array[array.length - 1]);
+    }
+
+    private static Sorter<Integer>[] getSortersForTest(int minimumElement, int maximumElement) {
+        Sorter[] sorters = {new QuickSort(500),
+                new QuickSort(250),
+                new QuickSort(10),
+                new QuickSort(1),
+                new BucketSort(minimumElement, maximumElement)};
+
+        return (Sorter<Integer>[]) sorters;
     }
 }

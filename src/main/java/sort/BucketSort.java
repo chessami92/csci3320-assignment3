@@ -18,7 +18,7 @@ public class BucketSort implements Sorter<Integer> {
 
     @Override
     public void sort(Integer[] array) {
-        int[] buckets = new int[maximumElement - minimumElement];
+        int[] buckets = new int[maximumElement - minimumElement + 1];
 
         for (Integer i : array) {
             ++buckets[i - minimumElement];
