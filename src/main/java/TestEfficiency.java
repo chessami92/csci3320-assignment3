@@ -14,13 +14,21 @@ import java.util.Random;
 public class TestEfficiency {
     private static final Random random = new Random();
     private static final String COLUMN_FORMAT = "%20s|";
+    private static final String DOUBLE_FORMAT = "%20.2f|";
+    private static final int RANGE_100 = 0;
+    private static final int RANGE_1 = 1;
+    private static final int REVERSE_SORTED = 2;
+    private static final int TESTS = 10;
 
     public static void main(String[] args) {
-        //Create the three test cases: 1000 integers between -1000 and 1000, 1000 integers between -1 and 1,
+        //Create 10 instances of three test cases: 1000 integers between -1000 and 1000, 1000 integers between -1 and 1,
         //and 1000 integers reverse sorted from 1000 to 1.
-        TestCase[] testCases = {new TestCase<Integer>(-100, 100, createArray(1000, 100), "Range -100 to 100"),
-                new TestCase<Integer>(-1, 1, createArray(1000, 1), "Range -1 to 1"),
-                new TestCase<Integer>(1, 1000, createReverseSortedArray(1, 1000), "Reverse sorted")};
+        TestCase[][] testCases = new TestCase[3][TESTS];
+        for (int i = 0; i < TESTS; ++i) {
+            testCases[RANGE_100][i] = new TestCase<Integer>(-100, 100, createArray(1000, 100), "Range -100 to 100");
+            testCases[RANGE_1][i] = new TestCase<Integer>(-1, 1, createArray(1000, 1), "Range -1 to 1");
+            testCases[REVERSE_SORTED][i] = new TestCase<Integer>(1, 1000, createReverseSortedArray(1, 1000), "Reverse sorted");
+        }
 
         //Print out the header for the table.
         Sorter[] sorters = getSortersForTest(0, 0);
@@ -31,24 +39,29 @@ public class TestEfficiency {
         System.out.println();
 
         //Go through each previously created test case.
-        for (TestCase<Integer> testCase : testCases) {
+        for (TestCase<Integer>[] testCaseList : testCases) {
             //Print out what test case this is.
-            System.out.printf(COLUMN_FORMAT, testCase.getDescription());
+            System.out.printf(COLUMN_FORMAT, testCaseList[0].getDescription());
             //Create the sorter objects given this test case.
-            sorters = getSortersForTest(testCase.getMinimumElement(), testCase.getMaximumElement());
+            sorters = getSortersForTest(testCaseList[0].getMinimumElement(), testCaseList[0].getMaximumElement());
             for (Sorter<Integer> sorter : sorters) {
-                //Create a new copy of the array as to not sort it before the other methods get to it.
-                Integer[] array = copyArray(testCase.getArray());
+                //Keep track of how long all of the sorts take.
+                long totalTimeTook = 0;
+                for (TestCase<Integer> testCase : testCaseList) {
+                    //Create a new copy of the array as to not sort it before the other methods get to it.
+                    Integer[] array = copyArray(testCase.getArray());
 
-                //Keep track of how long the sorting takes.
-                Date startTime = new Date();
-                sorter.sort(array);
-                long timeTook = new Date().getTime() - startTime.getTime();
+                    //Keep track of how long the sorting takes.
+                    Date startTime = new Date();
+                    sorter.sort(array);
+                    totalTimeTook += new Date().getTime() - startTime.getTime();
+
+                    //Verify that the array was actually sorted correctly.
+                    checkArraySorted(array);
+                }
+
                 //Print out the result in milliseconds for this sorter.
-                System.out.printf(COLUMN_FORMAT, timeTook);
-
-                //Verify that the array was actually sorted correctly.
-                checkArraySorted(array);
+                System.out.printf(DOUBLE_FORMAT, (double) totalTimeTook / TESTS);
             }
             System.out.println();
         }
