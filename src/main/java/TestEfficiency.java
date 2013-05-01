@@ -22,6 +22,7 @@ public class TestEfficiency {
                 new TestCase<Integer>(-1, 1, createArray(1000, 1), "Range -1 to 1"),
                 new TestCase<Integer>(1, 1000, createReverseSortedArray(1, 1000), "Reverse sorted")};
 
+        //Print out the header for the table.
         Sorter[] sorters = getSortersForTest(0, 0);
         System.out.printf(COLUMN_FORMAT, "Test Type");
         for (Sorter<Integer> sorter : sorters) {
@@ -29,15 +30,21 @@ public class TestEfficiency {
         }
         System.out.println();
 
+        //Go through each previously created test case.
         for (TestCase<Integer> testCase : testCases) {
+            //Print out what test case this is.
             System.out.printf(COLUMN_FORMAT, testCase.getDescription());
+            //Create the sorter objects given this test case.
             sorters = getSortersForTest(testCase.getMinimumElement(), testCase.getMaximumElement());
             for (Sorter<Integer> sorter : sorters) {
+                //Create a new copy of the array as to not sort it before the other methods get to it.
                 Integer[] array = copyArray(testCase.getArray());
 
+                //Keep track of how long the sorting takes.
                 Date startTime = new Date();
                 sorter.sort(array);
                 long timeTook = new Date().getTime() - startTime.getTime();
+                //Print out the result in milliseconds for this sorter.
                 System.out.printf(COLUMN_FORMAT, timeTook);
 
                 //Verify that the array was actually sorted correctly.
@@ -47,6 +54,9 @@ public class TestEfficiency {
         }
     }
 
+    /*
+     * Creates an array of size length filled with values between + and - maxValue.
+     */
     private static Integer[] createArray(int length, int maxValue) {
         Integer[] array = new Integer[length];
 
@@ -57,6 +67,10 @@ public class TestEfficiency {
         return array;
     }
 
+    /*
+     * Create a non-random array that has all elements between minimum element and maximum
+     * element in the reverse order.
+     */
     private static Integer[] createReverseSortedArray(int minimumElement, int maximumElement) {
         Integer[] array = new Integer[maximumElement - minimumElement + 1];
 
@@ -68,7 +82,8 @@ public class TestEfficiency {
     }
 
     /*
-     * Returns a deep copy of the original array.
+     * Returns a deep copy of the original array, that is, a new instance with all elements
+     * in the same order as the original array.
      */
     private static Integer[] copyArray(Integer[] array) {
         Integer[] newArray = new Integer[array.length];
@@ -88,6 +103,7 @@ public class TestEfficiency {
         int priorElement = array[0];
 
         for (int i = 1; i < array.length - 1; ++i) {
+            //Check that it is properly sorted.
             if (array[i] < priorElement) {
                 throw new IllegalArgumentException("Array is not sorted");
             }
@@ -95,6 +111,10 @@ public class TestEfficiency {
         }
     }
 
+    /*
+     * Creates and returns list of all types of sorters to be tested. Ensures the same order
+     * when printing the column headers and when actually performing the tests.
+     */
     private static Sorter<Integer>[] getSortersForTest(int minimumElement, int maximumElement) {
         Sorter[] sorters = {new QuickSort(500),
                 new QuickSort(250),

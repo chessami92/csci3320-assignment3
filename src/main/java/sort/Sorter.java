@@ -6,5 +6,6 @@ package main.java.sort;
  */
 public interface Sorter <T extends Comparable<T>> {
     public void sort(T[] array);
+    //A description of the sorting algorithm.
     public String getSorterDescription();
 }
